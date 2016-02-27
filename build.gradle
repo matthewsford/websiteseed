@@ -1,0 +1,102 @@
+buildscript {
+  repositories {
+    mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+        maven {
+            url 'https://dl.bintray.com/nikit007/mvn-repo/'
+        }
+  }
+
+  dependencies {
+    classpath 'com.google.appengine:gradle-appengine-plugin:1.9.30'
+        classpath "com.github.nikit.cpp.helpers:db:1.0.7" // need for use helpers.MysqlHelper
+        classpath "gradle.plugin.com.github.nikit.cpp:wildflyDeployPlugin:1.0.8"
+  }
+}
+
+plugins {
+  id "com.github.hierynomus.license" version "0.12.1"
+  id "com.github.nikit.cpp.wildfly.deploy" version "1.0.8"
+}
+
+apply plugin: 'java'
+apply plugin: 'appengine'
+apply plugin: 'findbugs'
+apply plugin: 'eclipse'
+apply plugin: 'jdepend'
+apply plugin: 'project-report'
+apply plugin: 'war'
+apply plugin: 'wrapper'
+
+jar {
+  baseName = 'website-seed'
+  version = '1.0.0-SNAPSHOT'
+}
+
+sourceCompatibility = '1.7'
+targetCompatibility = '1.7'
+
+appengine {
+  httpPort = 8085
+  endpoints {
+    getClientLibsOnBuild = false
+  }
+  
+  appcfg {
+    email = 'matthew.scott.ford@gmail.com'
+      passIn = true
+      oauth2 = true
+
+      logs {
+        severity = 1
+          outputFile = file('mylogs.txt')
+      }
+
+    app {
+      id = 'academic-timing-122702'
+    }
+  }
+}
+
+dependencies {
+  compile 'com.google.appengine:appengine:1.9.30'
+  compile 'com.google.appengine:appengine-endpoints:1.9.30'
+  compile 'com.googlecode.objectify:objectify:5.1.10'
+  compile 'javax.inject:javax.inject:1'
+  compile 'javax.servlet:servlet-api:2.5'
+
+  testCompile 'org.testng:testng:6.9.10'
+  testCompile 'org.mockito:mockito-core:2.0.43-beta'
+
+  runtime 'org.jboss.spec:jboss-javaee-6.0:3.0.3.Final'
+}
+
+tasks.withType(Pmd) {
+  exclude "build/**"
+}
+
+repositories {
+    mavenCentral()
+}
+
+tasks.withType(FindBugs) {
+  reports {
+    xml.enabled = false
+    html.enabled = true
+  }
+}
+
+tasks.withType(JavaCompile) {
+  doFirst {
+    if (sourceCompatibility == '1.7' && System.env.JDK7_HOME != null) {
+      options.fork = true
+      options.bootClasspath = "$System.env.JDK7_HOME/jre/lib/rt.jar"
+      options.bootClasspath += "$File.pathSeparator$System.env.JDK7_HOME/jre/lib/jsse.jar"
+      // use the line above as an example to add jce.jar 
+      // and other specific JDK jars
+    }
+  }
+}
+
