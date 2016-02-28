@@ -13,22 +13,20 @@
  *
  * Contributors: Matthew Ford
  */
-package us.matthewford.websiteseed.guice;
+package us.matthewford.websiteseed.dal;
 
-import us.matthewford.websiteseed.dal.objectify.MyObjectifyModule;
+import us.matthewford.websiteseed.model.HelloGreeting;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.servlet.GuiceServletContextListener;
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author Matthew Ford
  */
-public class MyGuiceServletConfig extends GuiceServletContextListener {
+public interface GreetingRepository extends Serializable {
+  public HelloGreeting getById(Long id);
 
-  @Override
-  protected Injector getInjector() {
-    return Guice.createInjector(new MyGuiceSystemServiceServletModule(), new MyObjectifyModule(),
-        new MyServletModule());
-  }
+  public HelloGreeting save(HelloGreeting greeting);
+
+  public List<HelloGreeting> getAll();
 }

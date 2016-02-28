@@ -190,6 +190,6 @@ google.devrel.samples.hello.init = function(apiRoot) {
   }
 
   apisToLoad = 2; // must match number of calls to gapi.client.load()
-  gapi.client.load('helloworld', 'v1', callback, apiRoot);
+  gapi.client.load('helloworld', 'v2', callback, apiRoot);
   gapi.client.load('oauth2', 'v2', callback);
 };

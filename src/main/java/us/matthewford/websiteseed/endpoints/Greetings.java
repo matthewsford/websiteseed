@@ -20,10 +20,12 @@ import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.response.NotFoundException;
 import com.google.appengine.api.users.User;
 
+import us.matthewford.websiteseed.dal.GreetingRepository;
 import us.matthewford.websiteseed.model.HelloGreeting;
 
-import java.util.ArrayList;
+import java.util.List;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 
 /**
@@ -32,28 +34,29 @@ import javax.inject.Named;
 /**
  * Defines v1 of a helloworld API, which provides simple "greeting" methods.
  */
-@Api(name = "helloworld", version = "v1", scopes = {Constants.EMAIL_SCOPE},
+@Api(name = "helloworld", version = "v2", scopes = {Constants.EMAIL_SCOPE},
     clientIds = {Constants.WEB_CLIENT_ID, Constants.ANDROID_CLIENT_ID, Constants.IOS_CLIENT_ID},
     audiences = {Constants.ANDROID_AUDIENCE})
 public class Greetings {
 
-  public static ArrayList<HelloGreeting> greetings = new ArrayList<HelloGreeting>();
+  @Inject
+  GreetingRepository greetingRepo;
 
   static {
-    greetings.add(new HelloGreeting("hello world!"));
-    greetings.add(new HelloGreeting("goodbye world!"));
+    //greetings.add(new HelloGreeting("hello world!"));
+    //greetings.add(new HelloGreeting("goodbye world!"));
   }
 
-  public HelloGreeting getGreeting(@Named("id") Integer id) throws NotFoundException {
+  public HelloGreeting getGreeting(@Named("id") Long id) throws NotFoundException {
     try {
-      return greetings.get(id);
+      return greetingRepo.getById(id);
     } catch (IndexOutOfBoundsException e) {
       throw new NotFoundException("Greeting not found with an index: " + id);
     }
   }
 
-  public ArrayList<HelloGreeting> listGreeting() {
-    return greetings;
+  public List<HelloGreeting> listGreeting() {
+    return greetingRepo.getAll();
   }
 
   @ApiMethod(name = "greetings.multiply", httpMethod = "post")
@@ -64,7 +67,7 @@ public class Greetings {
       responseBuilder.append(greeting.getMessage());
     }
     response.setMessage(responseBuilder.toString());
-    return response;
+    return greetingRepo.save(response);
   }
 
   @ApiMethod(name = "greetings.authed", path = "hellogreeting/authed")

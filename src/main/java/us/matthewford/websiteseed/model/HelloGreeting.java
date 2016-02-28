@@ -15,11 +15,18 @@
  */
 package us.matthewford.websiteseed.model;
 
+import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Id;
+
 /**
  * @author Matthew Ford
  */
+@Entity
 public class HelloGreeting {
 
+  @Id
+  Long id;
+  
   public String message;
 
   public HelloGreeting() {};
@@ -28,6 +35,10 @@ public class HelloGreeting {
     this.message = message;
   }
 
+  public Long getId() {
+    return id;
+  }
+  
   public String getMessage() {
     return message;
   }

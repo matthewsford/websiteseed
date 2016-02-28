@@ -13,22 +13,8 @@
  *
  * Contributors: Matthew Ford
  */
-package us.matthewford.websiteseed.guice;
-
-import us.matthewford.websiteseed.dal.objectify.MyObjectifyModule;
-
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.servlet.GuiceServletContextListener;
+package us.matthewford.websiteseed.dal.objectify;
 
 /**
  * @author Matthew Ford
  */
-public class MyGuiceServletConfig extends GuiceServletContextListener {
-
-  @Override
-  protected Injector getInjector() {
-    return Guice.createInjector(new MyGuiceSystemServiceServletModule(), new MyObjectifyModule(),
-        new MyServletModule());
-  }
-}

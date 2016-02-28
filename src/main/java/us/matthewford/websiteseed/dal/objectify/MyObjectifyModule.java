@@ -13,22 +13,27 @@
  *
  * Contributors: Matthew Ford
  */
-package us.matthewford.websiteseed.guice;
+package us.matthewford.websiteseed.dal.objectify;
 
-import us.matthewford.websiteseed.dal.objectify.MyObjectifyModule;
+import us.matthewford.websiteseed.dal.GreetingRepository;
+import us.matthewford.websiteseed.model.HelloGreeting;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.servlet.GuiceServletContextListener;
+import com.google.inject.servlet.ServletModule;
+import com.googlecode.objectify.ObjectifyFilter;
+import com.googlecode.objectify.ObjectifyService;
+
+import javax.inject.Singleton;
 
 /**
  * @author Matthew Ford
  */
-public class MyGuiceServletConfig extends GuiceServletContextListener {
+public class MyObjectifyModule extends ServletModule {
 
   @Override
-  protected Injector getInjector() {
-    return Guice.createInjector(new MyGuiceSystemServiceServletModule(), new MyObjectifyModule(),
-        new MyServletModule());
+  protected void configureServlets() {
+    ObjectifyService.register(HelloGreeting.class);
+    bind(GreetingRepository.class).to(GreetingRepositoryOfyImpl.class);
+    bind(ObjectifyFilter.class).in(Singleton.class);
+    filter("/*").through(ObjectifyFilter.class);
   }
 }
